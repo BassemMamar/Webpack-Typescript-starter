@@ -13,9 +13,9 @@ module.exports = {
     new CopyWebpackPlugin([
       { from: Path.resolve(__dirname, '../src/assets'), to: 'assets' }
     ]),
-    new webpack.EnvironmentPlugin([
-      'NODE_ENV',
-    ]),
+    // new webpack.EnvironmentPlugin([
+    //   'NODE_ENV',
+    // ]),
     new HtmlWebpackPlugin({
       template: './src/index.html',
       inject: true

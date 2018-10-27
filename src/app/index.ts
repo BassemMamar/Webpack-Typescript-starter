@@ -1,7 +1,17 @@
 import '../styles.scss';
+import AdsVideoHandler from './ads-video-handler';
 
-import Cat from './cat';
-import Dog from './dog';
-export { Dog, Cat };
+window.addEventListener('load', () => {
+    console.log('document has been loaded successfully!');
 
-console.log('index.js main entry file xxx');
+    /**
+     *  config is optional.
+     *  if not passed then the default configuration will applied
+     */
+    let config = {
+        fraction: 0.5,
+        continuousTime: 2,
+        autoplay: false
+    };
+    let handler = new AdsVideoHandler('my-ads-video', config);
+});
