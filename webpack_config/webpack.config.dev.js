@@ -31,7 +31,7 @@ module.exports = merge(baseConfig, {
         test: /\.(ts|tsx)?$/,
         loader: 'ts-loader',
         options: {
-          configFile: Path.resolve(__dirname, "../src/tsconfig.spec.json")
+          configFile: Path.resolve(__dirname, "../src/tsconfig.app.json")
         },
         exclude: /node_modules/
       },

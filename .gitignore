@@ -3,6 +3,8 @@
 # compiled output
 /build
 /tests
+/dist
+/documentaion
 /out-tsc
 
 # dependencies

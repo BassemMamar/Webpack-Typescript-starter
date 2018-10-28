@@ -21,7 +21,7 @@ export default class AdsVideoHandler {
    * required to be able to clear timer registeration if the ads video paused 
    * before the continues time finished
    */
-  continuesPlayingTimerReference: number;
+  continuesPlayingTimerReference: NodeJS.Timeout;
 
   /**
    * the total continues time for the ads video to keep playing
@@ -50,7 +50,7 @@ export default class AdsVideoHandler {
   init(config: AdsVideoConfig): void {
     // the default state for the ads video is ready
     this.state = AdsState.Ready;
-    this.continuesPlayingTimerReference = 0;
+    this.continuesPlayingTimerReference = null;
 
     this.continuousTime = config.continuousTime;
     this.fraction = config.fraction;

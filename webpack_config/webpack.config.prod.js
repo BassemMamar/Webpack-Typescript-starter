@@ -2,6 +2,7 @@ const Path = require('path');
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+var TypedocWebpackPlugin = require('typedoc-webpack-plugin');
 const merge = require('webpack-merge');
 
 const baseConfig = require('./webpack.config.common.js');
@@ -52,8 +53,18 @@ module.exports = merge(baseConfig, {
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
-      filename: 'css/styles.min.css',
-
-    })
+      filename: 'css/styles.min.css'
+    }),
+    new TypedocWebpackPlugin({
+      out: Path.resolve(__dirname, '../documentaion'),
+      name: 'JavaScript API',
+      mode: 'file',
+      target: 'es6',
+      theme: 'default',
+      includeDeclarations: false,
+      ignoreCompilerErrors: true,
+      excludePrivate: true
+    },
+      [Path.resolve(__dirname, '../src/app')])
   ],
 });

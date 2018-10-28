@@ -1,15 +1,15 @@
-const webpack = require('webpack');
 const Path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 
 module.exports = {
   entry: [
     './src/app/index.ts'
   ],
   plugins: [
-    new CleanWebpackPlugin(['build','tests'], { root: Path.resolve(__dirname, '..') }),
+    new CleanWebpackPlugin(['dist','build', 'tests','documentaion'], { root: Path.resolve(__dirname, '..') }),
     new CopyWebpackPlugin([
       { from: Path.resolve(__dirname, '../src/assets'), to: 'assets' }
     ]),
