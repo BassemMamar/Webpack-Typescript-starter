@@ -8,7 +8,7 @@
   "license": "ISC",
   "scripts": {
     "clean": "rimraf build documentaion tests dist",
-    "build": "webpack --config webpack_config/webpack.config.prod.js  --colors",
+    "build": "npm run test -- --singleRun true & webpack --config webpack_config/webpack.config.prod.js  --colors",
     "start": "webpack-dev-server --open --config webpack_config/webpack.config.dev.js",
     "test": "karma start ./karma.conf.js"
   },
@@ -28,8 +28,8 @@
     "html-webpack-plugin": "^3.2.0",
     "html-webpack-template": "^6.2.0",
     "istanbul-instrumenter-loader": "^3.0.0",
-    "jasmine": "^3.2.0",
-    "jasmine-core": "^3.2.1",
+    "jasmine": "3.0.0",
+    "jasmine-core": "3.0.0",
     "jasmine-spec-reporter": "~4.1.0",
     "karma": "^3.0.0",
     "karma-chrome-launcher": "^2.2.0",

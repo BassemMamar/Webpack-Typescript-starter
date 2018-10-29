@@ -1,10 +1,10 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/build
-/tests
-/dist
-/documentaion
+# /build
+# /test-coverage
+# /dist
+# /documentaion
 /out-tsc
 
 # dependencies
@@ -42,5 +42,3 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-
-/Documentaion

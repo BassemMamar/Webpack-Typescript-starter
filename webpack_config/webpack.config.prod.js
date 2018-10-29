@@ -2,7 +2,8 @@ const Path = require('path');
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-var TypedocWebpackPlugin = require('typedoc-webpack-plugin');
+const TypedocWebpackPlugin = require('typedoc-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const merge = require('webpack-merge');
 
 const baseConfig = require('./webpack.config.common.js');
@@ -13,8 +14,8 @@ module.exports = merge(baseConfig, {
   stats: 'errors-only',
   output: {
     path: Path.join(__dirname, '../build'),
-    filename: 'js/[name].[chunkhash:8].js',
-    chunkFilename: 'js/[name].[chunkhash:8].chunk.js',
+    filename: 'js/library.bundle.js',
+    chunkFilename: 'js/library.bundle.js',
     crossOriginLoading: false
   },
   optimization: {
@@ -49,6 +50,7 @@ module.exports = merge(baseConfig, {
     ],
   },
   plugins: [
+    new CleanWebpackPlugin(['build', 'documentaion'], { root: Path.resolve(__dirname, '..') }),
     // Extract imported CSS into own file
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output

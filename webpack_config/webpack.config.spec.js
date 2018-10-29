@@ -1,6 +1,7 @@
 const merge = require('webpack-merge');
 const baseConfig = require('./webpack.config.common.js');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const Path = require('path');
 
 module.exports = merge(baseConfig, {
@@ -16,6 +17,7 @@ module.exports = merge(baseConfig, {
     port: '3001',
   },
   plugins: [
+    new CleanWebpackPlugin([ 'test-coverage'], { root: Path.resolve(__dirname, '..') }),
     // Extract imported CSS into own file
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output

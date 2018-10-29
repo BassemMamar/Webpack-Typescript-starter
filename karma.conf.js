@@ -1,9 +1,9 @@
-var webpackConf = require('./webpack/webpack.config.spec');
+var webpackConf = require('./webpack_config/webpack.config.spec');
 module.exports = function(config) {
   config.set({
     basePath: '',
     frameworks: ['jasmine'],
-    files: [{ pattern: './src/test.ts', watched: false }],
+    files: [{ pattern: './src/test.ts'}],
     preprocessors: { './src/test.ts': ['webpack', 'sourcemap'] },
     webpack: {
       module: webpackConf.module,
@@ -13,7 +13,9 @@ module.exports = function(config) {
       noInfo: true,
       stats: 'errors-only'
     },
-    
+    client: {
+      clearContext: false // leave Jasmine Spec Runner output visible in browser
+    },
    
 
     reporters: ['spec', 'coverage-istanbul'],
@@ -27,7 +29,7 @@ module.exports = function(config) {
     },
     coverageIstanbulReporter: {
       reports: ['html', 'lcov', 'text-summary'],
-      dir: './tests/coverage', // coverage results needs to be saved under coverage/
+      dir: './test-coverage', // coverage results needs to be saved under coverage/
       fixWebpackSourcePaths: true,
       query: {
         esModules: true
@@ -41,10 +43,10 @@ module.exports = function(config) {
     },
     port: 9876,
     colors: true,
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_Error,
     autoWatch: true,
     browsers: ['Chrome'],
-    singleRun: true,
+    singleRun: false,
     concurrency: Infinity
   });
 };

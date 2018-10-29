@@ -24,7 +24,7 @@ let isElementVisible = (element: HTMLElement, fraction: number = DefaultConfig.f
     visibleX = Math.max(0, Math.min(elementWidth, window.pageXOffset + window.innerWidth - x, r - window.pageXOffset));
     visibleY = Math.max(0, Math.min(elementHeight, window.pageYOffset + window.innerHeight - y, b - window.pageYOffset));
     visible = visibleX * visibleY / (elementWidth * elementHeight);
-
+    
     return visible >= fraction;
 }
 
@@ -33,11 +33,15 @@ let isElementVisible = (element: HTMLElement, fraction: number = DefaultConfig.f
  * @param element  Html element to calculate it's offsetLeft
  */
 let getX = (element: HTMLElement) => {
+    if (element == null)
+        return 0;
+
     let elementX = element.offsetLeft;
     if (elementX === 0) {
         return 0;
     }
-    let elementParentX = element.parentElement.offsetLeft;
+    
+    let elementParentX = element.parentElement ? element.parentElement.offsetLeft : 0;
     if (elementX !== elementParentX) {
         return elementX + getX(element.parentElement);
     }
@@ -52,11 +56,14 @@ let getX = (element: HTMLElement) => {
  * @param element  Html element to calculate it's offsetTop
  */
 let getY = (element: HTMLElement) => {
+    if (element == null)
+        return 0;
+
     let elementY = element.offsetTop;
     if (elementY === 0) {
         return 0;
     }
-    let elementParentY = element.parentElement.offsetTop;
+    let elementParentY = element.parentElement ? element.parentElement.offsetTop : 0;
     if (elementY !== elementParentY) {
         return elementY + getY(element.parentElement);
     }
@@ -66,4 +73,28 @@ let getY = (element: HTMLElement) => {
     }
 }
 
-export { isElementVisible }
+
+/**
+ * The Key Point: Don't ever assume a video will play. 
+ * this method encapsolate partially promise returned when play a video in different browsers
+ * so that the caller just assume it always return a promise
+ * for more information chenk the links below:
+ * https://developers.google.com/web/updates/2017/09/autoplay-policy-changes
+ * https://developers.google.com/web/updates/2016/03/play-returns-promise
+ * 
+ * @param video The video element reference
+ */
+let videoPlayingHandler = (video: HTMLVideoElement): Promise<void> => {
+    let playPromise = video.play();
+
+    // In browsers that don’t yet support this functionality,
+    // playPromise won’t be defined.
+    if (playPromise !== undefined) {
+        return playPromise;
+    }
+    else {
+        return Promise.resolve();
+    }
+}
+
+export { isElementVisible, videoPlayingHandler }

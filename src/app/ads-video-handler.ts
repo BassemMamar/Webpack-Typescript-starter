@@ -1,5 +1,5 @@
 import { AdsState } from "./ads-state";
-import { isElementVisible } from "./helper";
+import { isElementVisible, videoPlayingHandler } from "./helper";
 import { AdsVideoConfig, DefaultConfig } from "./config";
 
 export default class AdsVideoHandler {
@@ -21,11 +21,12 @@ export default class AdsVideoHandler {
    * required to be able to clear timer registeration if the ads video paused 
    * before the continues time finished
    */
-  continuesPlayingTimerReference: NodeJS.Timeout;
+  continuesPlayingTimerReference: any;
 
   /**
-   * the total continues time for the ads video to keep playing
-   * so that we get notified after it finish
+   * The total continues time for the ads video to keep playing
+   * so that we get notified after it finish.
+   * Measured as second
    */
   continuousTime: number;
 
@@ -46,6 +47,8 @@ export default class AdsVideoHandler {
   /**
    * initialize properties with default value
    * register window event listeners for both scroll and resize
+   * 
+   * @param config The ads video config 
    */
   init(config: AdsVideoConfig): void {
     // the default state for the ads video is ready
@@ -66,29 +69,37 @@ export default class AdsVideoHandler {
    * in the viewport of the browser (at least 50% in our case)
    * If the ads video is visible then play the ads, otherwise pause the ads.
    */
-  adsVisiblityChangingHandler(): void {
-    if (isElementVisible(this.video, this.fraction)) {
+  adsVisiblityChangingHandler(): Promise<void> {
+    if (this.isAdsVideoVisible(this.video, this.fraction)) {
 
       // state < AdsState.Started means the state either Ready or Paused
-      if (this.video.paused || this.state < AdsState.Started) {
+      if (/** this.video.paused || */ this.state === AdsState.Finished || this.state < AdsState.Started) {
 
         // start playing the ads video
-        this.video.play();
-        this.state = AdsState.Started;
-        console.log('Video progress has been started.');
+        // let playPromise = this.video.play();
+        return this.PlayAdsVideo(this.video).then(() => {
+          console.log('Video progress has been started.');
 
-        // register ontimeupdate event handler to be able to follow the progress
-        this.video.ontimeupdate = this.ontimeupdateEventHandler.bind(this);
+          // set current ads video state to staerted
+          this.state = AdsState.Started;
 
-        // register onended event handler to be able to know the ads viceo finished
-        this.video.onended = this.onendedEventHandler.bind(this);
+          // register ontimeupdate event handler to be able to follow the progress
+          this.video.ontimeupdate = this.ontimeupdateEventHandler.bind(this);
 
-        // start monatoring the continues playing time for the ads video
-        this.continuesPlayingTimeMonator();
+          // register onended event handler to be able to know the ads viceo finished
+          this.video.onended = this.onendedEventHandler.bind(this);
+
+          // start monatoring the continues playing time for the ads video
+          this.continuesPlayingTimeMonator();
+
+        }).catch((error) => {
+          // Automatic playback failed.
+          console.error('Automatic playback failed for some reason. ', error);
+        });
       }
     }
     else {
-      if (!this.video.paused) {
+      if (/** !this.video.paused */ this.state !== AdsState.Paused) {
         // pause playing the ads video
         this.video.pause();
         this.state = AdsState.Paused;
@@ -97,18 +108,35 @@ export default class AdsVideoHandler {
         this.cancelMonatorTimer();
       }
     }
+    return Promise.resolve();
+  }
+  PlayAdsVideo(video: HTMLVideoElement): any {
+    return videoPlayingHandler(video);
+  }
+
+  isAdsVideoVisible(video: HTMLVideoElement, fraction?: number): any {
+    return isElementVisible(video, fraction);
   }
 
   /**
-   * This function follow the ads video's progress so that 
-   * print to the browser console when the ads video passed 25%, 50% and 75%
+   * This function follow the ads video's progress and calculate the progress percentage
    */
   ontimeupdateEventHandler(): void {
-    if (this.state === AdsState.Paused)
+    if (this.state === AdsState.Paused) {
       return;
-
+    }
     // calculate passed time percentage 
     let currentPercentage = this.video.currentTime / this.video.duration * 100;
+    this.checkTimeProgressPercentageChanges(currentPercentage);
+  }
+
+  /**
+   * Update the state acourding to current progress percentage 
+   * print to the browser console when the ads video passed 25%, 50% and 75%
+   * 
+   * @param currentPercentage Value range between 0 - 100
+   */
+  checkTimeProgressPercentageChanges(currentPercentage: number) {
     switch (true) {
       case (currentPercentage >= 75 && currentPercentage < 100 && this.state !== AdsState.Passed75):
         this.state = AdsState.Passed75;
@@ -126,10 +154,12 @@ export default class AdsVideoHandler {
   }
 
   /**
-  * print to the browser console when the ads video finish
-  */
+   * Get fired when the ads video finish.
+   * print to the browser console when the ads video finish
+   */
   onendedEventHandler(): void {
-    console.log('Video progress has been ended.');
+    console.log('Video progress has Passed 100%.');
+    this.state = AdsState.Finished;
   }
 
   /**
@@ -139,7 +169,7 @@ export default class AdsVideoHandler {
   continuesPlayingTimeMonator(): void {
     this.continuesPlayingTimerReference = setTimeout(() => {
       console.log(`The ad is in the viewport of the browser for at least 50% and ${this.continuousTime} continuous seconds.`);
-      this.cancelMonatorTimer();
+     // this.cancelMonatorTimer();
     }, this.continuousTime * 1000);
   }
 
