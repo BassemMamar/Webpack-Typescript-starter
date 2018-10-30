@@ -3,7 +3,7 @@ import AdsVideoHandler from '../../ads-video-handler';
 
 let padding = '    ';
 
-describe('** AdsVideoHandler **', () => {
+describe('** continuesPlayingTimeMonator **', () => {
     let lib: AdsVideoHandler;
     beforeEach(() => {
         let dummyVideoElement = document.createElement('video');

@@ -3,7 +3,7 @@ import AdsVideoHandler from '../../ads-video-handler';
 
 let padding = '    ';
 
-describe('** Helper **', () => {
+describe('** Helper /checkTimeProgressPercentageChanges/ **', () => {
     let lib: AdsVideoHandler;
 
     beforeEach(() => {

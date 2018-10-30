@@ -2,7 +2,7 @@ import { AdsState } from '../../ads-state';
 import AdsVideoHandler from '../../ads-video-handler';
 let padding = '    ';
 
-describe('** AdsVideoHandler **', () => {
+describe('** adsVisiblityChangingHandler **', () => {
     let lib: AdsVideoHandler;
   
     beforeEach(() => {
@@ -10,6 +10,7 @@ describe('** AdsVideoHandler **', () => {
         let dummyVideoElement = document.createElement('video');
         spyOn(document, 'getElementById').and.returnValue(dummyVideoElement);
         spyOn(console, "log");
+        spyOn(console, "error");
     });
 
     describe(`${padding}When the window scroll/size changes and adsVisiblityChangingHandler method gets fired:`, () => {
@@ -32,13 +33,15 @@ describe('** AdsVideoHandler **', () => {
             beforeEach(() => {
                 isAdsVideoVisibleSpa = spyOn(lib, 'isAdsVideoVisible')
                     .and.returnValue(true);
-                PlayAdsVideoSpa = spyOn(lib, 'PlayAdsVideo')
-                    .and.returnValue(Promise.resolve());
+                // PlayAdsVideoSpa = spyOn(lib, 'PlayAdsVideo')
+                //     .and.returnValue(Promise.resolve());
                 continuesPlayingTimeMonatorSpa = spyOn(lib, 'continuesPlayingTimeMonator')
             });
 
             it(`${padding}And when the video is Pausing, then should play the ads video`, (done) => {
-                
+                PlayAdsVideoSpa = spyOn(lib, 'PlayAdsVideo')
+                .and.returnValue(Promise.resolve());
+
                 lib.state = AdsState.Ready;
                 expect(lib.video.ontimeupdate).toBe(null);
                 expect(lib.video.onended).toBe(null);
@@ -57,8 +60,33 @@ describe('** AdsVideoHandler **', () => {
 
             });
 
+            it(`${padding}And when the video is Pausing, and playing promise rejected, then should print an ERROR message into the console`, (done) => {
+                PlayAdsVideoSpa = spyOn(lib, 'PlayAdsVideo')
+                .and.returnValue(Promise.reject({}));
+
+                lib.state = AdsState.Ready;
+                expect(lib.video.ontimeupdate).toBe(null);
+                expect(lib.video.onended).toBe(null);
+
+                lib.adsVisiblityChangingHandler()
+                    .then(() => {
+                        expect(AdsState[lib.state]).not.toBe(AdsState[AdsState.Started]);
+                        expect(lib.video.ontimeupdate).toBe(null);
+                        expect(lib.video.onended).toBe(null);
+                        expect(continuesPlayingTimeMonatorSpa).not.toHaveBeenCalled();
+                        expect(console.error).toHaveBeenCalled();
+                        done();
+                    });
+
+                expect(isAdsVideoVisibleSpa).toHaveBeenCalled();
+                expect(PlayAdsVideoSpa).toHaveBeenCalled();
+
+            });
+
             it(`${padding}And when the video is Playing, then should NOT re-play the ads video again`, (done) => {
-                
+                 PlayAdsVideoSpa = spyOn(lib, 'PlayAdsVideo')
+                    .and.returnValue(Promise.resolve());
+
                 lib.state = AdsState.Passed50;
                 lib.adsVisiblityChangingHandler()
                     .then(() => {

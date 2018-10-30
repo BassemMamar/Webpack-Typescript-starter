@@ -73,10 +73,10 @@ export default class AdsVideoHandler {
     if (this.isAdsVideoVisible(this.video, this.fraction)) {
 
       // state < AdsState.Started means the state either Ready or Paused
-      if (/** this.video.paused || */ this.state === AdsState.Finished || this.state < AdsState.Started) {
+      if (this.state === AdsState.Ready || this.state === AdsState.Paused || this.state === AdsState.Finished) {
 
         // start playing the ads video
-        // let playPromise = this.video.play();
+        // Here dealing with video play as Promise meaning the code inside the then() will not execute until the media is playing.
         return this.PlayAdsVideo(this.video).then(() => {
           console.log('Video progress has been started.');
 
@@ -93,14 +93,24 @@ export default class AdsVideoHandler {
           this.continuesPlayingTimeMonator();
 
         }).catch((error) => {
-          // Automatic playback failed.
-          console.error('Automatic playback failed for some reason. ', error);
+          /**
+           * Automatic playback failed.
+           * The video play promise rejected because of the browser policy
+           * for example Chrome new policy:
+           *    - Autoplay with sound is allowed if:
+           *      - User has interacted with the domain (click, tap, etc.).
+           *      - On desktop, the user's Media Engagement Index threshold has been crossed, meaning the user has previously play video with sound.
+           *      - On mobile, the user has [added the site to their home screen].
+           * 
+           * ToDo What's the requirment to handle this case? for now i am printing to the console.
+           */
+          console.error(`YOC- Could't play the ads video due the browser policy. Try to interact with the document first`);
         });
       }
     }
     else {
-      if (/** !this.video.paused */ this.state !== AdsState.Paused) {
-        // pause playing the ads video
+      if (this.state !== AdsState.Paused) {
+        // safely pause playing the ads video
         this.video.pause();
         this.state = AdsState.Paused;
 
@@ -169,7 +179,7 @@ export default class AdsVideoHandler {
   continuesPlayingTimeMonator(): void {
     this.continuesPlayingTimerReference = setTimeout(() => {
       console.log(`The ad is in the viewport of the browser for at least 50% and ${this.continuousTime} continuous seconds.`);
-     // this.cancelMonatorTimer();
+      // this.cancelMonatorTimer();
     }, this.continuousTime * 1000);
   }
 

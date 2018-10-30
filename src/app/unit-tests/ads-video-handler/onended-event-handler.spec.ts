@@ -3,7 +3,7 @@ import AdsVideoHandler from '../../ads-video-handler';
 
 let padding = '    ';
 
-describe('** AdsVideoHandler **', () => {
+describe('** onendedEventHandler **', () => {
     let lib: AdsVideoHandler;
     
     beforeEach(() => {
