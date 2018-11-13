@@ -58,6 +58,7 @@ export default class AdsVideoHandler {
     this.continuousTime = config.continuousTime;
     this.fraction = config.fraction;
     this.video.autoplay = config.autoplay;
+    this.video.muted = true;
 
     window.addEventListener('scroll', this.adsVisiblityChangingHandler.bind(this));
     window.addEventListener('resize', this.adsVisiblityChangingHandler.bind(this));
