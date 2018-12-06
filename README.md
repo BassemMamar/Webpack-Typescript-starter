@@ -118,8 +118,6 @@ also `documentaion` folder will be generated which contains fancy documentaion U
 
 Some images are provided in `sre/assets/doc_images/` for more information! 🙏
 
-I added `ToDo` comment near to the part i am not sure how to proceed.
-
 
 ---
 
