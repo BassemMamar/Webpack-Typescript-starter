@@ -3,6 +3,16 @@
 Simple TypeScript / ES6 starter powered by Webpack module bundler to generate pure es5 javascript library.
 
 
+# Main Task For this Sample Web App
+ * Show the video in the middle of the page.
+ * After the website has loaded, the video must not auto play.
+ * The video shall start playing when it is at least 50% in the viewport of the browser – and stop if it’s less than 50% viewable.
+ * use Plain/Vanilla JavaScript is the only option, no other external libraries.
+ * Display a message on the browser console when the video has started, has played through 25%, 50%, 75% and 100% of the full video length.
+ * Display an additional message on browser console, when the ad is in the viewport of the browser for at least 50% and 2 continuous seconds.
+ * Cover the functionality implemented with appropriate automated tests.
+    
+    
 # Quick Start #
 
 **Make sure you have Node version >= 8.x and NPM >= 5.x**
